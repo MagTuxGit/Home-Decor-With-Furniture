@@ -13,8 +13,8 @@ class ViewController: UIViewController {
 
     @IBOutlet weak var furnitureButton: UIButton!
     @IBOutlet weak var sceneView: ARSCNView!
-    @IBOutlet weak var collectionView: UICollectionView!{
-        didSet{
+    @IBOutlet weak var collectionView: UICollectionView! {
+        didSet {
             collectionView.delegate = self
             collectionView.dataSource = self
         }
@@ -28,7 +28,8 @@ class ViewController: UIViewController {
     
     var furnitureName = "Table"
     
-    override func viewDidLoad() {
+    override func viewDidLoad()
+    {
         super.viewDidLoad()
         sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints, ARSCNDebugOptions.showWorldOrigin]
         config.planeDetection = .horizontal
@@ -38,21 +39,21 @@ class ViewController: UIViewController {
         sceneView.autoenablesDefaultLighting = true
         
         addGestures()
-        
-
     }
     
-    fileprivate func createFloorNode(anchor:ARPlaneAnchor) ->SCNNode{
-        let floorNode = SCNNode(geometry: SCNPlane(width: CGFloat(anchor.extent.x), height: CGFloat(anchor.extent.z))) //1
-        floorNode.position=SCNVector3(anchor.center.x,0,anchor.center.z)                                               //2
-        floorNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: imageName)                                //3
-        floorNode.geometry?.firstMaterial?.isDoubleSided = true                                                        //4
-        floorNode.eulerAngles = SCNVector3(Double.pi/2,0,0)                                                            //5
-        floorNode.name = floorNodeName                                                                                  //6
-        return floorNode                                                                                                //7
+    fileprivate func createFloorNode(anchor:ARPlaneAnchor) -> SCNNode
+    {
+        let floorNode = SCNNode(geometry: SCNPlane(width: CGFloat(anchor.extent.x), height: CGFloat(anchor.extent.z)))
+        floorNode.position=SCNVector3(anchor.center.x,0,anchor.center.z)
+        floorNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: imageName)
+        floorNode.geometry?.firstMaterial?.isDoubleSided = true
+        floorNode.eulerAngles = SCNVector3(Double.pi/2,0,0)
+        floorNode.name = floorNodeName
+        return floorNode
     }
     
-    func addGestures(){
+    func addGestures()
+    {
         let tap = UITapGestureRecognizer(target: self, action: #selector(tapped(sender:)))
         tap.numberOfTapsRequired = 1
         sceneView.addGestureRecognizer(tap)
@@ -64,7 +65,8 @@ class ViewController: UIViewController {
         sceneView.addGestureRecognizer(rotateGesture)
     }
     
-    @objc func tapped(sender: UITapGestureRecognizer){
+    @objc func tapped(sender: UITapGestureRecognizer)
+    {
         let sceneView = sender.view as! ARSCNView
         let tapLocation = sender.location(in: sceneView)
         
@@ -78,7 +80,8 @@ class ViewController: UIViewController {
         }
     }
     
-    @objc func pinched(sender: UIPinchGestureRecognizer){
+    @objc func pinched(sender: UIPinchGestureRecognizer)
+    {
         let scnVw = sender.view as! ARSCNView
         let tapLoc = sender.location(in: scnVw)
         
@@ -91,7 +94,8 @@ class ViewController: UIViewController {
         }
     }
     
-    @objc func rotated(sender: UIRotationGestureRecognizer){
+    @objc func rotated(sender: UIRotationGestureRecognizer)
+    {
         let scnVw = sender.view as! ARSCNView
         let tapLoc = sender.location(in: scnVw)
         
@@ -102,11 +106,10 @@ class ViewController: UIViewController {
                 node?.eulerAngles = SCNVector3(CGFloat((node?.eulerAngles.x)!),sender.rotation,CGFloat((node?.eulerAngles.z)!))
             }
         }
-        
     }
     
-    func addFurniture(hitTestResult:ARHitTestResult){
-       
+    func addFurniture(hitTestResult:ARHitTestResult)
+    {
         guard let scene = SCNScene(named: "furnitures.scnassets/\(furnitureName).scn") else{return}
         
         let node = (scene.rootNode.childNode(withName: furnitureName, recursively: false))!
@@ -117,10 +120,8 @@ class ViewController: UIViewController {
         self.sceneView.scene.rootNode.addChildNode(node)
     }
     
-    
-    
-    
-    @IBAction func furnitureButtonTapped(_ sender: UIButton) {
+    @IBAction func furnitureButtonTapped(_ sender: UIButton)
+    {
         let alertController = UIAlertController(title: "Select Furniture", message: "", preferredStyle: .actionSheet)
         alertController.popoverPresentationController?.sourceView = sender
        
@@ -133,12 +134,11 @@ class ViewController: UIViewController {
         
         present(alertController, animated: true, completion: nil)
     }
-    
-
 }
 
 
-extension ViewController:ARSCNViewDelegate{
+extension ViewController: ARSCNViewDelegate
+{
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
         guard let planeAnchor = anchor as? ARPlaneAnchor else {return}
         let planeNode = createFloorNode(anchor: planeAnchor)
@@ -162,7 +162,8 @@ extension ViewController:ARSCNViewDelegate{
     }
 }
 
-extension ViewController:UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout{
+extension ViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout
+{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return floorImageArray.count
     }
@@ -177,9 +178,6 @@ extension ViewController:UICollectionViewDataSource, UICollectionViewDelegate, U
             imgVw.image = UIImage(named: floorImageArray[indexPath.row])
             resizeImageInCell(cell, isSelected: imageName == floorImageArray[indexPath.row])
         }
-        
-        
-        
         return cell
     }
     
@@ -189,29 +187,21 @@ extension ViewController:UICollectionViewDataSource, UICollectionViewDelegate, U
         
         resizeImageInCell(cell!, isSelected: true)
         
-        
         imageName = floorImageArray[indexPath.row]
         collectionView.reloadData()
-        
-        
     }
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         let cell = self.collectionView.cellForItem(at: indexPath)
-        
         resizeImageInCell(cell!, isSelected: false)
     }
     
     func resizeImageInCell(_ cell:UICollectionViewCell, isSelected:Bool){
-        
         cell.layer.cornerRadius = isSelected ? 35 : 20
         cell.layer.masksToBounds = true
-        
     }
-    
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return imageName == floorImageArray[indexPath.row] ? CGSize(width: 70, height: 70) : CGSize(width: 40, height: 40)
     }
-    
 }
