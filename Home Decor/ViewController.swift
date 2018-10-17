@@ -72,7 +72,7 @@ class ViewController: UIViewController {
         let sceneView = sender.view as! ARSCNView
         let tapLocation = sender.location(in: sceneView)
         
-        let hitTest = sceneView.hitTest(tapLocation, types: .existingPlaneUsingExtent)
+        let hitTest = sceneView.hitTest(tapLocation, types: .estimatedHorizontalPlane)
         if !hitTest.isEmpty{
             print("Touched on the plane")
             addFurniture(hitTestResult: hitTest.first!)
