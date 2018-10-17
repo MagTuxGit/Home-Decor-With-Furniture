@@ -21,7 +21,7 @@ class ViewController: UIViewController {
     }
     let config = ARWorldTrackingConfiguration()
     
-    let floorImageArray = ["Wood1","Wood2","Wood3","Wood4", "Wood5", "Wood6", "Tile1", "Tile2", "Tile3", "Tile4"]
+    let floorImageArray = ["grid","Wood1","Wood2","Wood3","Wood4", "Wood5", "Wood6", "Tile1", "Tile2", "Tile3", "Tile4"]
     let furnitureArray = ["Chair","Couch","Table","Vase"]
     lazy var imageName = floorImageArray[0]
     let floorNodeName = "FloorNode"
@@ -31,7 +31,8 @@ class ViewController: UIViewController {
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints, ARSCNDebugOptions.showWorldOrigin]
+        //sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints, ARSCNDebugOptions.showWorldOrigin]
+        sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints]
         config.planeDetection = .horizontal
         sceneView.session.run(config)
 
@@ -43,11 +44,12 @@ class ViewController: UIViewController {
     
     fileprivate func createFloorNode(anchor:ARPlaneAnchor) -> SCNNode
     {
-        let floorNode = SCNNode(geometry: SCNPlane(width: CGFloat(anchor.extent.x), height: CGFloat(anchor.extent.z)))
-        floorNode.position=SCNVector3(anchor.center.x,0,anchor.center.z)
+        let plane = SCNPlane(width: CGFloat(anchor.extent.x), height: CGFloat(anchor.extent.z))
+        let floorNode = SCNNode(geometry: plane)
+        floorNode.position = SCNVector3(anchor.center.x, 0, anchor.center.z)
         floorNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: imageName)
         floorNode.geometry?.firstMaterial?.isDoubleSided = true
-        floorNode.eulerAngles = SCNVector3(Double.pi/2,0,0)
+        floorNode.eulerAngles = SCNVector3(Double.pi/2, 0, 0)
         floorNode.name = floorNodeName
         return floorNode
     }
@@ -136,11 +138,10 @@ class ViewController: UIViewController {
     }
 }
 
-
 extension ViewController: ARSCNViewDelegate
 {
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-        guard let planeAnchor = anchor as? ARPlaneAnchor else {return}
+        guard let planeAnchor = anchor as? ARPlaneAnchor else { return }
         let planeNode = createFloorNode(anchor: planeAnchor)
         node.addChildNode(planeNode)
     }
