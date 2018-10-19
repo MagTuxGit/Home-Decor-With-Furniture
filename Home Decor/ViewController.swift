@@ -73,7 +73,7 @@ class ViewController: UIViewController {
         let tapLocation = sender.location(in: sceneView)
         
         let hitTest = sceneView.hitTest(tapLocation, types: .estimatedHorizontalPlane)
-        if !hitTest.isEmpty{
+        if !hitTest.isEmpty {
             print("Touched on the plane")
             addFurniture(hitTestResult: hitTest.first!)
         }
@@ -112,7 +112,7 @@ class ViewController: UIViewController {
     
     func addFurniture(hitTestResult:ARHitTestResult)
     {
-        guard let scene = SCNScene(named: "furnitures.scnassets/\(furnitureName).scn") else{return}
+        guard let scene = SCNScene(named: "furnitures.scnassets/\(furnitureName).scn") else { return }
         
         let node = (scene.rootNode.childNode(withName: furnitureName, recursively: false))!
         
